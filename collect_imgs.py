@@ -34,16 +34,15 @@ for j in range(number_of_classes):
             break
 
     if done:
+        print('Data collection abborted.')
         break
     
     counter = 0
     while counter < dataset_size:
         ret, frame = cap.read()
         
-        # ========= SHOW SAMPLED POINTS =========
+        # Display sampled points and connections
         frame = hd.findHands(frame, connections=True, points=True)
-        # lmList = hd.findPosition(img, circles=False)
-        # =======================================
         
         cv2.imshow('frame', frame)
         cv2.waitKey(25)
@@ -51,7 +50,7 @@ for j in range(number_of_classes):
 
         counter += 1
 
-if done:
-    print('Data collection abborted.')
+    print('Data collection for class {} finished.'.format(j))
+    
 cap.release()
 cv2.destroyAllWindows()
