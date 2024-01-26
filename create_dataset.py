@@ -16,6 +16,10 @@ DATA_DIR = './data'
 data = []
 labels = []
 for dir_ in os.listdir(DATA_DIR):
+    # skip files (like .gitignore)
+    if not os.path.isdir(os.path.join(DATA_DIR, dir_)):
+        continue
+    
     for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
         data_aux = []
 
@@ -43,7 +47,10 @@ for dir_ in os.listdir(DATA_DIR):
 
             data.append(data_aux)
             labels.append(dir_)
+            # print first 5 elements of each sample
+            print(f'Class {dir_}: {data_aux[:5]}...')
 
 f = open('data.pickle', 'wb')
 pickle.dump({'data': data, 'labels': labels}, f)
 f.close()
+print('Data saved to data.pickle')
