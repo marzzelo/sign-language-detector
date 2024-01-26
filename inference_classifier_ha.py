@@ -13,10 +13,6 @@ import requests
 load_dotenv()  # Load the environment variables from .env file
 URL = os.getenv("API_URL")
 
-# post request to the API
-def post_request(data):
-    response = requests.post(URL, json=data)
-    # return response.json()
 
 
 model_dict = pickle.load(open('./model.p', 'rb'))
@@ -28,7 +24,7 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.95)
 
 labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E'}
 
@@ -38,9 +34,7 @@ counter = 0
 
 def make_request_async(data):
     # post request to the API
-    response = requests.post(URL, json=data)
-    print(response)
-    return
+    requests.post(URL, json=data)
     
 
 while True:
@@ -100,13 +94,13 @@ while True:
             last_predicted_character = predicted_character
             color = (0, 0, 0)
 
-        if counter == 40:
+        if counter == 10:
             color = (0, 255, 0)
             # post request to the API
             # Create a new thread for making the request
             request_thread = threading.Thread(target=make_request_async, args=({'letter': predicted_character},))
             request_thread.start()
-            print(f'Letter: {predicted_character} - Request sent!')
+            # print(f'Letter: {predicted_character} - Request sent!')
 
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 4)
         cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, color, 3,
