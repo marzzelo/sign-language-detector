@@ -52,7 +52,7 @@ def main():
     
     while True:
         success, img = cap.read()
-        img = detector.findHands(img, points=True, draw_connections=True)
+        img = detector.findHands(img, points=True, connections=True)
         lmList = detector.findPosition(img, circles=False)
             
         cTime = time.time()
