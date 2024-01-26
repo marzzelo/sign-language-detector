@@ -1,5 +1,5 @@
 import os
-
+import handDetector as hd
 import cv2
 
 
@@ -9,6 +9,9 @@ if not os.path.exists(DATA_DIR):
 
 number_of_classes = 5
 dataset_size = 100
+
+
+hd = hd.HandDetector(max_num_hands=1)
 
 cap = cv2.VideoCapture(0)
 for j in range(number_of_classes):
@@ -20,6 +23,7 @@ for j in range(number_of_classes):
     done = False
     while True:
         ret, frame = cap.read()
+        
         cv2.putText(frame, 'Ready? Press "k" [esc EXIT]', (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 128, 0), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
         key = cv2.waitKey(25)
@@ -31,9 +35,16 @@ for j in range(number_of_classes):
 
     if done:
         break
+    
     counter = 0
     while counter < dataset_size:
         ret, frame = cap.read()
+        
+        # ========= SHOW SAMPLED POINTS =========
+        frame = hd.findHands(frame, connections=True, points=True)
+        # lmList = hd.findPosition(img, circles=False)
+        # =======================================
+        
         cv2.imshow('frame', frame)
         cv2.waitKey(25)
         cv2.imwrite(os.path.join(DATA_DIR, str(j), '{}.jpg'.format(counter)), frame)
