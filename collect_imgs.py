@@ -7,7 +7,7 @@ DATA_DIR = './data'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-number_of_classes = 3
+number_of_classes = 5
 dataset_size = 100
 
 cap = cv2.VideoCapture(0)
@@ -20,8 +20,7 @@ for j in range(number_of_classes):
     done = False
     while True:
         ret, frame = cap.read()
-        cv2.putText(frame, 'Ready? Press "k" [esc EXIT]', (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3,
-                    cv2.LINE_AA)
+        cv2.putText(frame, 'Ready? Press "k" [esc EXIT]', (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 128, 0), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
         key = cv2.waitKey(25)
         if key == 27:

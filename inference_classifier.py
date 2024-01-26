@@ -7,7 +7,7 @@ import numpy as np
 model_dict = pickle.load(open('./model.p', 'rb'))
 model = model_dict['model']
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -15,7 +15,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
 
-labels_dict = {0: 'A', 1: 'B', 2: 'L'}
+labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E'}
+
+last_predicted_character = None
+counter = 0
+
 while True:
 
     data_aux = []
@@ -58,16 +62,34 @@ while True:
         x2 = int(max(x_) * W) - 10
         y2 = int(max(y_) * H) - 10
 
+        if len(data_aux) != 42:
+            continue
+
         prediction = model.predict([np.asarray(data_aux)])
 
         predicted_character = labels_dict[int(prediction[0])]
 
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
-        cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
+        # if the same character is predicted 20 times in a row, change the color to green
+        if last_predicted_character == predicted_character:
+            counter += 1
+        else:
+            counter = 0
+            last_predicted_character = predicted_character
+            color = (0, 0, 0)
+
+        if counter >= 20:
+            color = (0, 255, 0)
+
+
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 4)
+        cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, color, 3,
                     cv2.LINE_AA)
 
     cv2.imshow('frame', frame)
-    cv2.waitKey(1)
+    key = cv2.waitKey(1)
+    if key == 27:
+        break
+
 
 
 cap.release()
